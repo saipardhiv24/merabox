@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MeraBox — share code &amp; text, fast</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📦</text></svg>" />
+
+<!-- highlight.js for syntax highlighting (free, no API key required) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="noise-overlay" aria-hidden="true"></div>
+
+<header class="topbar">
+  <a href="/" class="brand" data-link>
+    <span class="brand-mark">▮▯</span>
+    <span class="brand-text">MeraBox</span>
+  </a>
+  <div class="topbar-actions">
+    <button id="theme-toggle" class="icon-btn" title="Toggle dark / light mode" aria-label="Toggle theme">
+      <svg id="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg id="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ===================== CREATE PASTE VIEW ===================== -->
+  <section id="create-view" class="view">
+
+    <div class="editor-card">
+      <div class="editor-titlebar">
+        <span class="dot dot-red"></span>
+        <span class="dot dot-yellow"></span>
+        <span class="dot dot-green"></span>
+        <span class="editor-path" id="path-label">~/merabox/untitled</span>
+      </div>
+
+      <form id="paste-form" class="editor-body">
+        <div class="field-row">
+          <input type="text" id="title-input" placeholder="Untitled" maxlength="200" autocomplete="off" />
+          <select id="language-select" title="Language">
+            <option value="plaintext">Plain text</option>
+            <option value="javascript">JavaScript</option>
+            <option value="typescript">TypeScript</option>
+            <option value="python">Python</option>
+            <option value="java">Java</option>
+            <option value="c">C</option>
+            <option value="cpp">C++</option>
+            <option value="csharp">C#</option>
+            <option value="php">PHP</option>
+            <option value="ruby">Ruby</option>
+            <option value="go">Go</option>
+            <option value="rust">Rust</option>
+            <option value="html">HTML</option>
+            <option value="css">CSS</option>
+            <option value="json">JSON</option>
+            <option value="sql">SQL</option>
+            <option value="bash">Bash / Shell</option>
+            <option value="markdown">Markdown</option>
+            <option value="yaml">YAML</option>
+          </select>
+        </div>
+
+        <textarea id="content-input" class="code-input" placeholder="Paste or type your text/code here…" spellcheck="false" required></textarea>
+
+        <div class="field-row field-row-bottom">
+          <div class="expiry-group">
+            <label for="expiry-select">Expires</label>
+            <select id="expiry-select">
+              <option value="never">Never</option>
+              <option value="10m">10 minutes</option>
+              <option value="1h">1 hour</option>
+              <option value="1d">1 day</option>
+              <option value="1w">1 week</option>
+            </select>
+          </div>
+          <div class="char-count" id="char-count">0 characters</div>
+          <button type="submit" id="create-btn" class="btn btn-primary">
+            <span class="btn-label">Create Paste</span>
+            <span class="btn-spinner" hidden></span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <p class="hint">No account needed. Pastes are public to anyone with the link.</p>
+  </section>
+
+  <!-- ===================== VIEW PASTE VIEW ===================== -->
+  <section id="paste-view" class="view" hidden>
+
+    <div class="editor-card">
+      <div class="editor-titlebar">
+        <span class="dot dot-red"></span>
+        <span class="dot dot-yellow"></span>
+        <span class="dot dot-green"></span>
+        <span class="editor-path" id="view-path-label">~/merabox/…</span>
+      </div>
+
+      <div class="paste-meta">
+        <div class="paste-meta-left">
+          <h1 id="view-title">Untitled</h1>
+          <div class="meta-tags">
+            <span class="tag" id="view-language">plaintext</span>
+            <span class="meta-item" id="view-created">—</span>
+            <span class="meta-item" id="view-expires">—</span>
+          </div>
+        </div>
+        <div class="paste-meta-actions">
+          <button id="copy-btn" class="btn btn-ghost">Copy</button>
+          <button id="new-btn" class="btn btn-ghost">New Paste</button>
+          <button id="delete-btn" class="btn btn-danger">Delete</button>
+        </div>
+      </div>
+
+      <pre class="code-output"><code id="view-content"></code></pre>
+    </div>
+  </section>
+
+  <!-- ===================== LOADING VIEW ===================== -->
+  <section id="loading-view" class="view" hidden>
+    <div class="loading-wrap">
+      <div class="spinner-lg"></div>
+      <p>Loading paste…</p>
+    </div>
+  </section>
+
+  <!-- ===================== 404 / NOT FOUND VIEW ===================== -->
+  <section id="notfound-view" class="view" hidden>
+    <div class="notfound-wrap">
+      <div class="notfound-code">404</div>
+      <h2>This paste doesn't exist</h2>
+      <p id="notfound-message">It may have expired, been deleted, or never existed in the first place.</p>
+      <a href="/" class="btn btn-primary" data-link>Create a new paste</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <span>MeraBox — a minimal pastebin. Built with Node.js, Express &amp; MongoDB.</span>
+</footer>
+
+<div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
